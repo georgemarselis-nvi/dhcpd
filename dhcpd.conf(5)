@@ -1,0 +1,70 @@
+dhcpd.conf(5)
+
+# Name
+
+dhcpd.conf - The dhcpd configuration file
+
+## Description
+
+The dhcpd.conf file contains configuration information for the dhcpd daemon, the Internet Systems Consortium DHCP Server.
+
+## File format
+
+The file is comprised of comments, parameters and declarations. Comments start with a pound sign ('#') and end at newline. You can use whitespaces (tabs and newlines) for formating anywhere outside a parameter and/or declaration. 
+
+Parameters are in free-flow; they can appear either at the beginning of the line or anywhere with the same line, regardless of preceeding whitespace. ```ldap-port``` is a parameter used to state the port on which the dhcpd daemon can access an ldap server (more on that in ***dhcpd.conf-ldap(5)***). The following ```ldap-port``` parameter declerations are equivalent in regards to their decleration:
+	ldap-port 389;
+		ldap-port 389;
+	{
+		ldap-port 389;
+	}
+
+Declerations are can also appear in free flow. To be more specific, let's give an example:
+
+	subnet 10.5.5.0 netmask 255.255.255.224 {
+		range 10.5.5.26 10.5.5.30;
+		option routers 10.5.5.1;
+	}
+
+explain what is above
+
+Nested declerations here: 
+
+
+There are more declerations than just subnet, see ***dhcpd.conf-declerations(5)***
+
+### Parameters
+Parameters are variables for various dhcpd options. Examples of parameters are the dhcp lease duration, wheather or not to provide addresses to unknown/not-pre-registered clients or the IP address of a gateway a client should use. The format of dhcpd.conf allows most parameters to be both global or local to a subnet and/or group, depending on the needs of the administrator. All declerations must end with a semicolon.
+
+
+Parameters must be stated before any actual use in a decleration both globally and/or in a subnet/group decleration.
+
+   
+For a complete list of dhcpd parameters see ***dhcpd.conf-parameters(5)***.
+
+
+### Declerations
+
+Declerations are similar to a line of code in a program: They describe the parameters of the network (gateway, broadcast, MTU etc ) or the parameters the clients ( assigned IP for the client, assigned DNS etc ). 
+
+Declerations can be nested: a decleration can apply to a group of parameters and/or a group of other declerations. For example, you can group declerations that apply to multiple networks in a single decleration and then use that decleration in subsequent network declerations. Or, you can nest declerations to provide exeptions to speficic category of clients and/or network. 
+
+More examples in the relevant section ( **[Examples](#Examples-declerations)** )
+
+
+#### Client assignments
+Before we go into the details of declerations, we have to talk about client assignments. The assignments come in two flavors, dynamic and static assignment:
+1. Dynamic assignment is an IP/parameters assignment for the host that gets periodically refreshed, according to the lease duration parameter. Both known/previously declared hosts and unknown 
+2. Static assignments
+
+#### Restrictions(?)/Details
+
+Declerations describe the organizational topology of the dhcpd administered networks, along with any subnets.
+
+#### Declerations / Subnet decleration
+
+
+For a complete list of dhcpd declerations see ***dhcpd.conf-declerations(5)***. For a more complete and expanded list of examples see 
+* **[Examples](#Examples)** in this man page
+* ***dhcpd.conf-examples(5)***
+* ***dhcpd.conf-advanced-examples(5)***
