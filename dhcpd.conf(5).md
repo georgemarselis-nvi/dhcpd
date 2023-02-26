@@ -1,12 +1,12 @@
-dhcpd.conf(5)
+% dhcpd.conf(5) Version 1.0 | The ISC dhcpd configuration file
 
 # Name
 
-dhcpd.conf - The dhcpd configuration file
+dhcpd.conf - The ISC dhcpd configuration file. 
 
 ## Description
 
-The dhcpd.conf file contains configuration information for the dhcpd daemon, the Internet Systems Consortium DHCP Server.
+The dhcpd.conf file contains configuration information for the dhcpd daemon, the Internet Systems Consortium DHCP Server. This man page also describes several DHCP concepts, along with dhcpd redundancy and Dynamic DNS updates
 
 ## File format
 
@@ -36,15 +36,23 @@ Parameters and declarations can be on the same line, as long as you use the semi
 
 	subnet 192.168.10.0 netmask 255.255.255.0 { range 192.168.10.100 192.168.10.200; option routers 192.168.10.1; }
 
-
 You might have already guessed what these declarations might do. We will explain in more details further below. If you wish to read ahead, see ***dhcpd.conf-declarations(5)***
 
 ### Parameters
 
 Parameters are variables for various dhcpd options. Examples of parameters are the dhcp lease duration, wheather or not to provide addresses to unknown/not-pre-registered clients or the IP address of a gateway a client should use. The format of dhcpd.conf allows most parameters to be both global or local to a subnet and/or group, depending on the needs of the administrator. As we mentioned earlier, all declarations must end with a semicolon.
 
-Parameters must be stated before any actual use in a decleration, both globally and/or in a subnet/group decleration. DHCPD has either sane settings or does not require any parameter which is not already declared. Any options not specifically stated, are either inherited from ( reasonably reasonable) global parameters (MTU, for example) or ignored and not passed to the client. For example, if you do not include a ```option routers``` statement in your subnet decleration, it will create a router-less network declaration. 
+Parameters must be stated before any actual use in a decleration, both globally and/or in a subnet/group decleration. DHCPD has either sane settings or does not require any parameter which is not already declared. Any options not specifically stated, are either inherited from ( reasonably reasonable) global parameters (MTU, for example) or ignored and not passed to the client. For example, if you do not include a ```option routers``` statement in your subnet decleration, it will create a router-less network declaration. Multiple declarations of the same parameter can be applied, but the effect depends on the scope. For example while there can be a global ```option routers``` parameter which can be overriden by a more specific-to-the-network instance, like so: 
+
+	option routers 192.168.1.1;
+
+	subnet 192.168.10.0 netmask 255.255.255.0 {
+		range 192.168.10.100 192.168.10.200;
+		option routers 192.168.10.1;
+	}
    
+The clients which will not match any subnet described/declared(?) will inherit the global option. Otherwise any client on the 192.168.10.0/24 subnetwork will receive ```192.168.10.1``` as the network gateway.
+
 For a complete list of dhcpd parameters see ***dhcpd.conf-parameters(5)***.
 
 ### Declarations
@@ -68,14 +76,68 @@ Before we go into the details of declarations, we have to talk about client assi
 1. Dynamic assignment is an IP/parameters assignment for the host that gets periodically refreshed, according to the lease duration parameter.
 2. Static assignments, are hosts who have a known *characteristic*. Such characteristic can be the mac address (```hardware ethernet ``` parameter), or other details passed on by the client, such as booting in UEFI or BIOS. Static assignments are always included in specific declaration.
 
-#### Restrictions(?)/Details
 
-Declarations describe the organizational topology of the dhcpd administered networks, along with any subnets.
+#### Order of client assignments
 
-#### Declarations / Subnet decleration
+When dhcpd tries to find a host declaration for a client, it first looks for a host declaration which has a fixed-address declaration that lists an IP address that is valid for the subnet or shared network on which the client is booting. If it doesn't find any such entry, it tries to find an entry which has no fixed-address declaration
 
+Additionally, boot parameters are determined by 
+1. The client's host declaration (if any) 
+2. Consulting any class declarations matching the client
+3. Consulting any pool declarations matching the client
+4. Subnet matching and finally
+5. Shared-network declarations for the IP address assigned to the client
+
+Examples for the above will be given, after we explore the lexical scope of the file. 
+
+	host ncd1 { hardware ethernet 08:52:27:C4:8B:18; }
+
+Each of these declarations itself appears within a lexical scope, and all declarations at less specific lexical scopes are also consulted for client option declarations.
+
+### Syntax / EBNF / Lexical Scope
+
+Scopes are never considered twice.
+
+	If parameters are declared in more than one scope, the parameter declared in the most specific scope is the one that is used.
+The fuck this means? what is specific, in this case.
+
+## Most often used declarations
+
+#### Declaration: Host decleration
+The most often used declaration is the ```subnet``` decleration. We have already used it a couple of times already. 
+
+#### Declaration: Class decleration
+
+#### Declaration: Pool decleration
+
+#### Declaration: Subnet decleration
+
+#### Declaration: Shared-network decleration
+
+
+
+
+
+
+### Files
+
+### Bugs
+
+### Author
+
+### Most frequent mistakes
+
+Semicolons. Use dhcpd -T to test your setup, but the error messages provided can be less than stelar.
+
+### Concepts that you should be aware of
+
+**Shared network**: ```shared-network``` What is a "shared network" ? https://support.microfocus.com/kb/doc.php?id=7004091 . Why should we care? How do you configure a shared nework with dhcpd? https://serverfault.com/questions/1014741/isc-dhcpd-how-to-assign-different-dhcp-settings-even-if-request-originated-from
 
 For a complete list of dhcpd declarations see ***dhcpd.conf-declarations(5)***. For a more complete and expanded list of examples see 
 * **[Examples](#Examples)** in this man page
 * ***dhcpd.conf-examples(5)***
 * ***dhcpd.conf-advanced-examples(5)***
+
+### See Also
+
+***dhcpd.conf-examples(5)***, ***dhcpd.conf-advanced-examples(5)*** ***dhcpd.conf-ldap(5)***, ***dhcpd(8)***, ***dhcpd.leases(5)***, ***dhcp-options(5)***, ***dhcp-eval(5)***, RFC2132, RFC2131.
