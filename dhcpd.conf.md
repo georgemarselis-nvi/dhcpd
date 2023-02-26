@@ -1,4 +1,4 @@
-% dhcpd.conf(5) Version 1.0 | The ISC dhcpd configuration file
+% dhcpd.conf(5) 1.0 | The ISC dhcpd configuration file
 
 # Name
 
@@ -12,9 +12,10 @@ The dhcpd.conf file contains configuration information for the dhcpd daemon, the
 
 The file is comprised of comments, parameters and declarations. Comments start with a pound sign ('#') and end at newline. You can use whitespaces (tabs and newlines) for formating anywhere outside a parameter and/or declaration. 
 
-Comments, parameters and declarations can appear either at the beginning of the line or anywhere with the same line, regardless of preceeding whitespace. You can have comments at the end of a parameter, after you place the semicolon like this:
+Comments, parameters and declarations can appear either at the beginning of the line or anywhere with the same line, regardless of preceeding whitespace. You can have comments at the beginninig of a line or the end of a parameter, after you place the semicolon, like this:
 
-```ldap-port 389; # LDAP port``` # more on DHCP and LDAP in ***dhcpd.conf-ldap(5)***
+	# Section about ldap
+	ldap-port 389; # LDAP port
 
 Since dhcpd.conf can be a long file, please remember to indent your parameters and declarations, appropriatel. Terminate any parameter with a semicolon. In declarations, place parameters and nested declerations inside curly/brace brackets, much like a C program. 
 
@@ -30,7 +31,6 @@ Nested declarations look like this:
 			option routers 192.168.10.1;
 		}
 	}
-
 
 Parameters and declarations can be on the same line, as long as you use the semicolons (';') to declare the end of a parameter and remember to start and close the body of the decleration with curly/brace brackets. But since a company dhcpd can be quite long, it is really not worth the trouble: 
 
@@ -115,8 +115,9 @@ The most often used declaration is the ```subnet``` decleration. We have already
 #### Declaration: Shared-network decleration
 
 
+### DHCP assignment and Lease resolution
 
-
+#### Ip Address Conflic Prevention
 
 
 ### Files
