@@ -121,6 +121,8 @@ The most often used declaration is the ```subnet``` decleration. We have already
 
 An unknown client is a client requesting a lease, but has no host declaration defined in the configuration file.
 
+A known client is one that has a host entry somewhere in the conf file.
+
 ### Files
 
 ### Bugs
