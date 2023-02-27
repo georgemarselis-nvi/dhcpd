@@ -119,6 +119,7 @@ The most often used declaration is the ```subnet``` decleration. We have already
 
 #### Ip Address Conflic Prevention
 
+An unknown client is a client requesting a lease, but has no host declaration defined in the configuration file.
 
 ### Files
 
